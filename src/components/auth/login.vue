@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import Cookie from 'js-cookie'
 import AppSnackbar from '../snackbar'
 
@@ -62,7 +62,7 @@ export default {
             this.loading = true
             const v = this.validate()
             if (v) {
-                axios.post('http://api.post.test/oauth/token', {
+                this.axios.post('/oauth/token', {
                     grant_type: 'password',
                     client_id: 2,
                     client_secret: 'Rpu3HWH0k649Y8E08aotfqsWeOA7KTOPEsc4HTat',

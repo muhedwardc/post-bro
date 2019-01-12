@@ -42,12 +42,12 @@
 
 <script>
 import Cookie from 'js-cookie'
-import axios from 'axios'
+
 
 export default {
     methods: {
         logout() {
-            // axios.post('http://api.post.test/logout')
+            // axios.post('/logout')
             //     .then(r => r)
             //     .then(r => {
             //         if (r.status == 200) {

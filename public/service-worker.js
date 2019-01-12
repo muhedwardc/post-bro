@@ -21,7 +21,7 @@ if (workbox) {
     );
     
     workbox.routing.registerRoute(
-    new RegExp('http://api.post.test'),
+    new RegExp(''),
     workbox.strategies.networkFirst({
         cacheName: 'api',
     }),

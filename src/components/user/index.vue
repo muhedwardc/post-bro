@@ -75,7 +75,7 @@
 
 <script>
 import appLoading from '../loading'
-import axios from 'axios'
+
 
 export default {
     components: {
@@ -100,11 +100,11 @@ export default {
     mounted() {
         this.$store.state.loadContent = true
         const userId = this.$router.currentRoute.params.id
-        axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
+        this.axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
             .then(r => r.data)
             .then(user => this.user = user)
 
-        axios.get('https://jsonplaceholder.typicode.com/posts')
+        this.axios.get('https://jsonplaceholder.typicode.com/posts')
             .then(r => r.data)
             .then(posts => {
                 const userPosts = posts.filter(post => post.userId == userId)

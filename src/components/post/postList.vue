@@ -7,7 +7,7 @@
       >
         <v-flex shrink>
           <v-avatar class="mb-3" size="48px">
-            <img src="../../assets/circle.png" alt="avatar">
+            <img :src="gavatar(post.user.email)" alt="avatar">
           </v-avatar>
         </v-flex>
         <v-flex>
@@ -33,10 +33,18 @@
 </template>
 
 <script>
+import md5 from 'md5'
+
 export default {
     props: {
         posts: {
             type: Array
+        }
+    },
+
+    methods: {
+        gavatar(email) {
+            return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     }
 }

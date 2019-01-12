@@ -15,7 +15,7 @@
                     <img src="../../assets/circle.png" alt="avatar">
                 </v-avatar>
                 <v-layout column>
-                    <h3>Nama User</h3>
+                    <h3>Nama</h3>
                     <span>tanggal</span>
                 </v-layout>
             </v-layout>
@@ -102,7 +102,8 @@
 <script>
 import appLoading from '../loading'
 import commentList from '../comment/commentList'
-import axios from 'axios'
+import md5 from 'md5'
+
 
 export default {
     components: {
@@ -163,7 +164,7 @@ export default {
 
         async addComment() {
             this.loading = true
-            axios.post('http://api.post.test/posts/' + this.postId + '/comments', {
+            this.axios.post('/posts/' + this.postId + '/comments', {
                 comment: this.comment
             }, {
                 headers: {
@@ -183,7 +184,7 @@ export default {
 
         async fetchPost() {
             this.load.post = true
-            axios.get('http://api.post.test/posts/' + this.postId + '?with=user', {
+            this.axios.get('/posts/' + this.postId + '?with=user', {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.auth.token
                 }
@@ -198,7 +199,7 @@ export default {
 
         async fetchComment() {
             this.load.comment = true
-            axios.get('http://api.post.test/posts/' + this.postId + '/comments?with=user', {
+            this.axios.get('/posts/' + this.postId + '/comments?with=user', {
                 headers: {
                     'Authorization': 'Bearer ' + this.$store.state.auth.token
                 }

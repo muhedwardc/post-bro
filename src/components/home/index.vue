@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import axios from "axios"
+
 import sideNav from "../nav"
 import postList from "../post/postList"
 import appSnackbar from "../snackbar"
@@ -85,8 +85,8 @@ export default {
   methods: {
     createPost() {
       this.loading = true;
-      axios
-        .post('http://api.post.test/posts', {
+      this.axios
+        .post('/posts', {
           post: this.post
         }, {
           headers: {
@@ -108,8 +108,8 @@ export default {
       this.$store.commit('getContent', true)
       this.user = this.$store.state.auth.user;
       this.page += 1
-      axios
-        .get("http://api.post.test/posts?with=user&&with_count=comments?per_page=" + this.perPage + '&page=' + this.page, {
+      this.axios
+        .get("/posts?with=user&&with_count=comments?per_page=" + this.perPage + '&page=' + this.page, {
           headers: {
             'Authorization': 'Bearer ' + this.$store.state.auth.token
           }
@@ -137,6 +137,7 @@ export default {
 
   created() {
     this.fetchData()
+    console.log(md5)
   },
 
   mounted() {

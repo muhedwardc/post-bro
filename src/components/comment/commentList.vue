@@ -4,7 +4,7 @@
             <v-layout class="comment-item" @click="$router.replace({ name: 'User', params: { id: comment.id } })">
                 <v-flex shrink>
                     <v-avatar size="48px" class="mr-2">
-                        <img src="../../assets/circle.png" alt="avatar">
+                        <img :src="gavatar(comment.user.email)" alt="avatar">
                     </v-avatar>
                 </v-flex>
                 <v-flex>
@@ -23,11 +23,18 @@
 </template>
 
 <script>
+import md5 from 'md5'
 export default {
     props: {
         comments: {
             type: Array,
             required: true
+        }
+    },
+
+    methods: {
+        gavatar(email) {
+            return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     }
 }
