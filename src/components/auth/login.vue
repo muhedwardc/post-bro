@@ -9,6 +9,7 @@
                         label="Email"
                         required
                         :disabled="loading"
+                         @keypress.enter="login"
                     ></v-text-field>
                 </v-flex>
                 <v-flex>
@@ -19,6 +20,7 @@
                         label="Password"
                         required
                         :disabled="loading"
+                        @keypress.enter="login"
                     ></v-text-field>
                 </v-flex>
                 <v-btn @click="login" :loading="loading">Login</v-btn>

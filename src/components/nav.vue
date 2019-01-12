@@ -42,12 +42,28 @@
 
 <script>
 import Cookie from 'js-cookie'
+import axios from 'axios'
+
 export default {
     methods: {
         logout() {
-            Cookie.remove('_tkn')
-            this.$store.state.auth.token = ''
-            this.$router.replace({ name: 'Login' })
+            // axios.post('http://api.post.test/logout')
+            //     .then(r => r)
+            //     .then(r => {
+            //         if (r.status == 200) {
+            //             Cookie.remove('_tkn')
+            //             this.$store.state.auth.token = ''
+            //             this.$router.replace({ name: 'Login' })
+            //         }
+            //     })
+            //     .catch(err => this.$store.commit('displayError', err.message))\
+            try {
+                Cookie.remove('_tkn')
+                this.$store.state.auth.token = ''
+                this.$router.replace({ name: 'Login' })
+            } catch (err) {
+                this.$store.commit('displayError', err.message)
+            }
         }
     }
 }

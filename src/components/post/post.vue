@@ -10,7 +10,7 @@
         </v-toolbar>
         <app-loading class="content" v-if="!notLoading"></app-loading>
         <v-layout v-if="notLoading" class="post-content content" column>
-            <v-layout align-center class="post" @click="$router.replace({ name: 'User', params: { id: post.id } })">
+            <v-layout align-center class="post" @click="$router.replace({ name: 'User', params: { id: post.user_id } })">
                 <v-avatar size="48px" class="mr-2">
                     <img src="../../assets/circle.png" alt="avatar">
                 </v-avatar>

@@ -20,7 +20,8 @@
             <v-icon medium>list_alt</v-icon>&nbsp;{{ posts.length }} post{{ posts.length > 0 ? 's' : null }}
         </v-layout>
         <v-divider class="mb-2"></v-divider>
-        <v-layout column>
+        <app-loading v-if="$store.state.loadContent"></app-loading>
+        <v-layout v-if="!$store.state.loadContent" column>
             <v-layout column v-for="post in posts" :key="post.id">
                 <v-layout @click="$router.replace({ name: 'Show', params: { id: post.id } })" class="post-content post">
                     <v-flex shrink>
@@ -72,9 +73,13 @@
 </template>
 
 <script>
+import appLoading from '../loading'
 import axios from 'axios'
 
 export default {
+    components: {
+        appLoading
+    },
     data() {
         return {
             user: {},
@@ -92,6 +97,7 @@ export default {
     },
 
     mounted() {
+        this.$store.state.loadContent = true
         const userId = this.$router.currentRoute.params.id
         axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
             .then(r => r.data)
@@ -102,6 +108,7 @@ export default {
             .then(posts => {
                 const userPosts = posts.filter(post => post.userId == userId)
                 this.posts = userPosts
+                this.$store.state.loadContent = false
             })
     }
 }
