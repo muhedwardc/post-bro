@@ -57,6 +57,7 @@ import sideNav from "../nav"
 import postList from "../post/postList"
 import appSnackbar from "../snackbar"
 import appLoading from "../loading"
+
 export default {
   components: {
     sideNav,
@@ -137,7 +138,6 @@ export default {
 
   created() {
     this.fetchData()
-    console.log(md5)
   },
 
   mounted() {
@@ -146,7 +146,6 @@ export default {
 
       if (bottomOfWindow) {
         if (this.posts.length%this.page == 0){
-          console.log('fetchdata')
           this.fetchData()
         } 
       }

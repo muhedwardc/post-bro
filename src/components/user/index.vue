@@ -8,7 +8,7 @@
         </v-toolbar>
         <v-layout align-center class="user-info content profile-header">
             <v-avatar size="72px" class="mr-3">
-                <img src="../../assets/circle.png" alt="avatar">
+                <img :src="gavatar(user.email)" alt="avatar">
             </v-avatar>
             <v-layout column>
                 <h3 class="mb-2">{{ user.name }}</h3>
@@ -75,7 +75,7 @@
 
 <script>
 import appLoading from '../loading'
-
+import md5 from 'md5'
 
 export default {
     components: {
@@ -94,15 +94,20 @@ export default {
     methods: {
         createPost() {
             console.log(this.post)
+        },
+
+        gavatar(email) {
+            return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     },
 
     mounted() {
         this.$store.state.loadContent = true
+        this.user = this.$store.state.auth.user
         const userId = this.$router.currentRoute.params.id
-        this.axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
-            .then(r => r.data)
-            .then(user => this.user = user)
+        // this.axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
+        //     .then(r => r.data)
+        //     .then(user => this.user = user)
 
         this.axios.get('https://jsonplaceholder.typicode.com/posts')
             .then(r => r.data)

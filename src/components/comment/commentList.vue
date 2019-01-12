@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-layout v-for="comment in comments" :key="comment.id" column>
-            <v-layout class="comment-item" @click="$router.replace({ name: 'User', params: { id: comment.id } })">
+            <v-layout class="comment-item" @click="$router.replace({ name: 'User', params: { id: comment.user_id } })">
                 <v-flex shrink>
                     <v-avatar size="48px" class="mr-2">
                         <img :src="gavatar(comment.user.email)" alt="avatar">
