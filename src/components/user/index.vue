@@ -69,6 +69,7 @@
         >
             <v-icon>add</v-icon>
         </v-btn>
+        <app-loading></app-loading>
     </div>
 </template>
 

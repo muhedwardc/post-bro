@@ -69,6 +69,8 @@ export default {
       user: {},
       post: "",
       posts: [],
+      page: 0,
+      perPage: 15,
       compose: false,
       loading: false,
       loadPost: false,
@@ -105,18 +107,21 @@ export default {
     fetchData() {
       this.$store.commit('getContent', true)
       this.user = this.$store.state.auth.user;
+      this.page += 1
       axios
-        .get("http://api.post.test/posts?with=user&&with_count=comments", {
+        .get("http://api.post.test/posts?with=user&&with_count=comments?per_page=" + this.perPage + '&page=' + this.page, {
           headers: {
             'Authorization': 'Bearer ' + this.$store.state.auth.token
           }
         })
         .then(r => r.data)
         .then(posts => {
-          this.posts = posts.data
+          const temp = this.posts.concat(posts.data)
+          this.posts = temp
           this.$store.commit('getContent', false)
         })
         .catch(err => {
+          this.page -= 1
           this.$store.commit('getContent', false)
           this.$store.state.snackbar.message = err.message
           this.$store.state.snackbar.show = true
@@ -132,6 +137,19 @@ export default {
 
   created() {
     this.fetchData()
+  },
+
+  mounted() {
+    window.onscroll = () => {
+      let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+
+      if (bottomOfWindow) {
+        if (this.posts.length%this.page == 0){
+          console.log('fetchdata')
+          this.fetchData()
+        } 
+      }
+    };
   }
 };
 </script>
