@@ -3,11 +3,11 @@
         <v-list class="pa">
             <v-list-tile avatar>
                 <v-list-tile-avatar>
-                    <img src="../assets/circle.png" alt="avatar">
+                    <img :src="$store.state.auth.user.email ? gavatar($store.state.auth.user.email) : gavatar('undefined')" alt="avatar">
                 </v-list-tile-avatar>
 
                 <v-list-tile-content>
-                <v-list-tile-title>John Leider</v-list-tile-title>
+                <v-list-tile-title>{{ $store.state.auth.user.name }}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
             </v-list>
@@ -42,28 +42,22 @@
 
 <script>
 import Cookie from 'js-cookie'
-
+import md5 from 'md5'
 
 export default {
     methods: {
         logout() {
-            // axios.post('/logout')
-            //     .then(r => r)
-            //     .then(r => {
-            //         if (r.status == 200) {
-            //             Cookie.remove('_tkn')
-            //             this.$store.state.auth.token = ''
-            //             this.$router.replace({ name: 'Login' })
-            //         }
-            //     })
-            //     .catch(err => this.$store.commit('displayError', err.message))\
             try {
                 Cookie.remove('_tkn')
                 this.$store.state.auth.token = ''
-                this.$router.replace({ name: 'Login' })
+                this.$router.push({ name: 'Login' })
             } catch (err) {
                 this.$store.commit('displayError', err.message)
             }
+        },
+        
+        gavatar(email) {
+            return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     }
 }

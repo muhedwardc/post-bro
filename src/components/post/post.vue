@@ -1,21 +1,21 @@
 <template>
     <div>
         <v-toolbar flat fixed>
-            <v-icon @click="$router.replace({ name: 'Home' })">keyboard_backspace</v-icon>
+            <v-icon @click="$router.go(-1)">keyboard_backspace</v-icon>
             <v-toolbar-title>
                 Post
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <!-- <v-btn v-if="post.id == $store.state.auth.user.id" @click="editPost">edit</v-btn> -->
+            <v-btn v-if="post.user_id == $store.state.auth.user.id" @click="editPost">edit</v-btn>
         </v-toolbar>
         <app-loading class="content" v-if="!notLoading"></app-loading>
         <v-layout v-if="notLoading" class="post-content content" column>
-            <v-layout align-center class="post" @click="$router.replace({ name: 'User', params: { id: post.user_id } })">
+            <v-layout align-center class="post" @click="$router.push({ name: 'User', params: { id: post.user_id } })">
                 <v-avatar size="48px" class="mr-2">
-                    <img src="../../assets/circle.png" alt="avatar">
+                    <img :src="post.user.email ? gavatar(post.user.email) : 'undefined'" alt="avatar">
                 </v-avatar>
                 <v-layout column>
-                    <h3>Nama</h3>
+                    <h3>{{ post.user.name }}</h3>
                     <span>tanggal</span>
                 </v-layout>
             </v-layout>
@@ -26,7 +26,7 @@
                 </v-layout>
             <v-divider class="mb-2"></v-divider>
             <v-layout column>
-                <comment-list :comments="comments"></comment-list>
+                <comment-list :comments="comments" v-on:update-comment="fetchComment"></comment-list>
             </v-layout>
         </v-layout>
         <v-dialog class="dialog" v-model="createComment" fullscreen hide-overlay transition="dialog-bottom-transition">
@@ -43,43 +43,27 @@
                     label="tulis post anda"
                     rows="3"
                     v-model="comment"
-                    auto-grow>
+                    auto-grow
+                    :disabled="loading">
                 </v-textarea>
             </v-layout>
         </v-dialog>
-        <v-dialog v-if="post.userId == $store.state.auth.user.id" class="dialog" v-model="editDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+        <v-dialog v-if="post.user_id == $store.state.auth.user.id" class="dialog" v-model="editDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-toolbar flat>
                 <v-icon @click="loading ? null : resetPost()">close</v-icon>
                 <v-toolbar-title>
                     Edit Post
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn v-if="edit !== post.post" :loading="loading">Edit</v-btn>
+                <v-btn v-if="edit !== post.post" :loading="loading" @click="updatePost">Edit</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
                 <v-textarea
                     label="tulis post anda"
                     rows="3"
                     v-model="edit"
-                    auto-grow>
-                </v-textarea>
-            </v-layout>
-        </v-dialog>
-        <v-dialog class="dialog" v-model="commentEdit.show" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <v-toolbar flat>
-                <v-icon @click="loading ? null : resetComment()">close</v-icon>
-                <v-toolbar-title>
-                    Edit Post
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn v-if="commentEdit.text !== commentEdit.editText" :loading="loading" @click="updateComment">Edit</v-btn>
-            </v-toolbar>
-            <v-layout class="post-input">
-                <v-textarea
-                    label="tulis post anda"
-                    rows="3"
-                    v-model="commentEdit.editText"
-                    auto-grow>
+                    auto-grow
+                    :disabled="loading">
                 </v-textarea>
             </v-layout>
         </v-dialog>
@@ -124,42 +108,43 @@ export default {
             comments: [],
             comment: '',
             edit: '',
-            loading: false,
-            commentEdit: {
-                id: '',
-                text: '',
-                editText: '',
-                show: false
-            }
+            loading: false
         }
     },
 
     methods: {
+        gavatar(email) {
+            return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
+        },
+        
         editPost() {
             this.editDialog = true
-            this.edit = this.post.body
+            this.edit = this.post.post
         },
 
         resetPost() {
             this.editDialog = false
-            this.edit = this.post.body
+            this.edit = this.post.post
         },
 
-        editComment(id, text) {
-            this.commentEdit.show = true
-            this.commentEdit.id = id
-            this.commentEdit.text = text
-            this.commentEdit.editText = text
-        },
-
-        updateComment() {
-            console.log(commentEdit)
-            this.commentEdit.show = false
-        },
-
-        resetComment() {
-            this.commentEdit.show = false
-            this.commentEdit.editText = this.commentEdit.text
+        async updatePost() {
+            this.loading = true
+            this.axios.put('/posts/' + this.postId, {
+                post: this.edit
+            }, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.auth.token
+                }
+            })
+            .then(() => {
+                this.edit = ''
+                this.loading = false
+                this.editDialog = false
+                this.fetchPost()
+                    .catch(err => this.$store.commit('displayError', err.message))
+                this.$router.push({ name: 'Show', params: { id: this.postId }})
+            })
+            .catch(err => this.$store.commit('displayError', err.message))
         },
 
         async addComment() {
@@ -177,7 +162,7 @@ export default {
                 this.createComment = false
                 this.fetchComment()
                     .catch(err => this.$store.commit('displayError', err.message))
-                this.$router.replace({ name: 'Show', params: { id: this.postId }})
+                this.$router.push({ name: 'Show', params: { id: this.postId }})
             })
             .catch(err => this.$store.commit('displayError', err.message))
         },
@@ -190,11 +175,28 @@ export default {
                 }
             })
             .then(r => r.data)
+            .then(post => post.data)
             .then(post => {
-                this.post = post.data
-                this.load.post = false
+                this.post = post
+                this.axios.get('/users/' + post.user_id, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.auth.token
+                    }
+                })
+                    .then(r => r.data.data)
+                    .then(user => {
+                        this.post.user = user
+                        this.load.post = false
+                    })
+                    .catch(err => {
+                        this.load.post = false
+                        this.$store.commit('displayError', err.message)
+                    })
             })
-            .catch(err => this.$store.commit('displayError', err.message))
+            .catch(err => {
+                this.load.post = false
+                this.$store.commit('displayError', err.message)
+            })
         },
 
         async fetchComment() {
@@ -209,8 +211,11 @@ export default {
                 this.comments = comments.data
                 this.load.comments = false
             })
-            .catch(err => this.$store.commit('displayError', err.message))
-        }
+            .catch(err => {
+                this.load.comments = false
+                this.$store.commit('displayError', err.message)
+            })
+        },
     },
 
     created() {

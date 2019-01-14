@@ -64,15 +64,14 @@ export default {
             if (v) {
                 this.axios.post('/oauth/token', {
                     grant_type: 'password',
-                    client_id: 2,
-                    client_secret: 'Rpu3HWH0k649Y8E08aotfqsWeOA7KTOPEsc4HTat',
+                    client_id: process.env.VUE_APP_CLIENT_ID,
+                    client_secret: process.env.VUE_APP_CLIENT_SECRET,
                     username: this.email,
                     password: this.password
                 })
                 .then(r => r.data)
                 .then(user => {
                     const token = user.access_token
-                    console.log(token)
                     this.axios.get('/user', {
                         headers: {
                             'Authorization': 'Bearer ' + token
@@ -93,6 +92,7 @@ export default {
                     let status = err.message.split(' ')
                     status = status[status.length-1]
                     Cookie.remove('_tkn')
+                    Cookie.remove('_user')
                     this.loading = false
                     if (status == '401') this.$store.commit('displayError', 'Wrong email & password combination (401)')
                     else this.$store.commit('displayError', err.message)  

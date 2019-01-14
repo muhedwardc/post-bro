@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import Cookie from 'js-cookie'
 import AppSnackbar from '../snackbar'
 
 export default {
@@ -83,10 +84,54 @@ export default {
 
     methods: {
         async register() {
+            this.loading = true
             const v = this.validate()
             if (v) {
-                this.$router.replace({ name: 'Home' })
+                this.axios.post('/register', {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password
+                })
+                .then(() => {
+                    this.axios.post('/oauth/token', {
+                        grant_type: 'password',
+                        client_id: process.env.VUE_APP_CLIENT_ID,
+                        client_secret: process.env.VUE_APP_CLIENT_SECRET,
+                        username: this.email,
+                        password: this.password
+                    })
+                    .then(r => r.data)
+                    .then(user => {
+                        const token = user.access_token
+                        this.axios.get('/user', {
+                            headers: {
+                                'Authorization': 'Bearer ' + token
+                            }
+                        })
+                            .then(r => r.data)
+                            .then(user => {
+                                const exp = user.expires_in/60/60/24
+                                Cookie.set('_user', user, { expires: exp })
+                                Cookie.set('_tkn', token, { expires: exp})
+                                this.$store.state.auth.token = user.token
+                                this.$store.state.auth.user = user
+                                this.loading = false
+                                this.$router.replace({ name: 'Home' })
+                            })
+                    })
+                    .catch(err => {
+                        let status = err.message.split(' ')
+                        status = status[status.length-1]
+                        Cookie.remove('_tkn')
+                        Cookie.remove('_user')
+                        this.loading = false
+                        this.$store.commit('displayError', err.message)  
+                    })
+                })
+                .then(() => this.$router.replace({ name: 'Home' }))
+                .catch(err => this.$store.commit('displayError', err.message))
             } else {
+                this.loading = false
                 this.$store.state.snackbar.message =  'Invalid Input'
                 this.$store.state.snackbar.show = true
             }

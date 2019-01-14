@@ -4,7 +4,7 @@
       <v-toolbar-title>
         <v-layout align-center>
           <v-avatar @click.stop="drawer = !drawer" size="36px">
-            <img src="../../assets/circle.png" alt="avatar">
+            <img :src="gavatar($store.state.auth.user.email)" alt="avatar">
           </v-avatar>
           <span class="ml-3">{{ title }}</span>
         </v-layout>
@@ -57,6 +57,7 @@ import sideNav from "../nav"
 import postList from "../post/postList"
 import appSnackbar from "../snackbar"
 import appLoading from "../loading"
+import md5 from 'md5'
 
 export default {
   components: {
@@ -72,6 +73,7 @@ export default {
       posts: [],
       page: 0,
       perPage: 15,
+      lastPage: 1,
       compose: false,
       loading: false,
       loadPost: false,
@@ -84,6 +86,9 @@ export default {
   },
 
   methods: {
+    gavatar(email) {
+      return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
+    },
     createPost() {
       this.loading = true;
       this.axios
@@ -97,7 +102,9 @@ export default {
         .then(() => {
           this.loading = false;
           this.compose = false;
-          this.$router.replace({ name: 'Home' })
+          this.$router.push({ name: 'Home' })
+          this.page = 0
+          this.posts = []
           this.fetchData();
         })
         .catch(err => {
@@ -119,6 +126,7 @@ export default {
         .then(posts => {
           const temp = this.posts.concat(posts.data)
           this.posts = temp
+          this.lastPage = posts.meta.last_page
           this.$store.commit('getContent', false)
         })
         .catch(err => {
@@ -145,7 +153,7 @@ export default {
       let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
 
       if (bottomOfWindow) {
-        if (this.posts.length%this.page == 0){
+        if (this.page < this.lastPage){
           this.fetchData()
         } 
       }

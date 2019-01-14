@@ -1,18 +1,17 @@
 <template>
     <div>
         <v-toolbar flat fixed>
-            <v-icon @click="$router.replace({ name: 'Home' })">keyboard_backspace</v-icon>
+            <v-icon @click="$router.go(-1)">keyboard_backspace</v-icon>
             <v-toolbar-title>
                 Profile
             </v-toolbar-title>
         </v-toolbar>
         <v-layout align-center class="user-info content profile-header">
             <v-avatar size="72px" class="mr-3">
-                <img :src="gavatar(user.email)" alt="avatar">
+                <img :src="user.email ? gavatar(user.email) : gavatar('undefined')" alt="avatar">
             </v-avatar>
             <v-layout column>
                 <h3 class="mb-2">{{ user.name }}</h3>
-                <v-btn @click="$router.replace({ name: 'Edit User', params: { id: user.id }})">Edit profile</v-btn>
             </v-layout>
         </v-layout>
         <v-divider class="mt-2"></v-divider>
@@ -20,13 +19,12 @@
             <v-icon medium>list_alt</v-icon>&nbsp;{{ posts.length }} post{{ posts.length > 0 ? 's' : null }}
         </v-layout>
         <v-divider class="mb-2"></v-divider>
-        <app-loading v-if="$store.state.loadContent"></app-loading>
         <v-layout v-if="!$store.state.loadContent" column>
             <v-layout column v-for="post in posts" :key="post.id">
-                <v-layout @click="$router.replace({ name: 'Show', params: { id: post.id } })" class="post-content post">
+                <v-layout @click="$router.push({ name: 'Show', params: { id: post.id } })" class="post-content post">
                     <v-flex shrink>
                         <v-avatar size="48px">
-                            <img src="../../assets/circle.png" alt="avatar">
+                            <img :src="user.email ? gavatar(user.email) : gavatar('undefined')" alt="avatar">
                         </v-avatar>
                     </v-flex>
                     <v-flex>
@@ -34,7 +32,7 @@
                             <h4>{{ user.name }}</h4>
                             <span class="font-italic" color="grey">&nbsp;. 4h</span>
                         </v-layout>
-                        <p class="article mb-0">{{ post.body }}</p> 
+                        <p class="article mb-0">{{ post.post }}</p> 
                     </v-flex>
                 </v-layout>
             </v-layout>
@@ -101,19 +99,27 @@ export default {
         }
     },
 
-    mounted() {
+    created() {
         this.$store.state.loadContent = true
-        this.user = this.$store.state.auth.user
         const userId = this.$router.currentRoute.params.id
-        // this.axios.get('https://jsonplaceholder.typicode.com/users/' + userId)
-        //     .then(r => r.data)
-        //     .then(user => this.user = user)
+        this.axios.get('/users/' + userId, {
+            headers: {
+                'Authorization': 'Bearer ' + this.$store.state.auth.token
+            }
+        })
+            .then(r => r.data)
+            .then(user => {
+                this.user = user.data
+            })
 
-        this.axios.get('https://jsonplaceholder.typicode.com/posts')
+        this.axios.get('/users/' + userId + '/posts', {
+            headers: {
+                'Authorization': 'Bearer ' + this.$store.state.auth.token
+            }
+        })
             .then(r => r.data)
             .then(posts => {
-                const userPosts = posts.filter(post => post.userId == userId)
-                this.posts = userPosts
+                this.posts = posts.data
                 this.$store.state.loadContent = false
             })
     }

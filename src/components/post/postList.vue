@@ -3,7 +3,7 @@
     <v-layout v-for="post in posts" :key="post.id" column class="post">
       <v-layout
         class="post-content"
-        @click="$router.replace({ name: 'Show', params: { id: post.id } })"
+        @click="$router.push({ name: 'Show', params: { id: post.id } })"
       >
         <v-flex shrink>
           <v-avatar class="mb-3" size="48px">
