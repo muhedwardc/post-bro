@@ -129,7 +129,13 @@ export default {
                     })
                 })
                 .then(() => this.$router.replace({ name: 'Home' }))
-                .catch(err => this.$store.commit('displayError', err.message))
+                .catch(err => {
+                    this.loading = false
+                    let status = err.message.split(' ')
+                    status = status[status.length-1]
+                    if (status == 500) this.$store.commit('displayError', 'Email sudah digunakan (500)')
+                    else this.$store.commit('displayError', err.message)
+                })
             } else {
                 this.loading = false
                 this.$store.state.snackbar.message =  'Invalid Input'
