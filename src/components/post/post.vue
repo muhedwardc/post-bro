@@ -3,7 +3,7 @@
         <v-toolbar flat fixed>
             <v-icon @click="$router.go(-1)">keyboard_backspace</v-icon>
             <v-toolbar-title>
-                Post
+                Story
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn v-if="post.user_id == $store.state.auth.user.id" @click="editPost">edit</v-btn>
@@ -22,7 +22,7 @@
             <p class="p-show mt-3">{{ post.post }}</p>
             <v-divider class="mt-2"></v-divider>
                 <v-layout pa-2 align-center justify-center>
-                    <v-icon medium>chat_bubble_outline</v-icon>&nbsp;{{ comments.length }} comment{{ comments.length > 0 ? 's' : null }}
+                    <v-icon medium>chat_bubble_outline</v-icon>&nbsp;{{ comments.length }} comment{{ comments.length > 1 ? 's' : null }}
                 </v-layout>
             <v-divider class="mb-2"></v-divider>
             <v-layout column>
@@ -33,14 +33,14 @@
             <v-toolbar flat>
                 <v-icon @click="loading ? null : createComment = false">close</v-icon>
                 <v-toolbar-title>
-                    Create Comment
+                    Create comment
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn v-if="comment" :loading="loading" @click="addComment">create</v-btn>
+                <v-btn v-if="comment" :loading="loading" @click="addComment">Comment</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
                 <v-textarea
-                    label="tulis post anda"
+                    label="Create your comment"
                     rows="3"
                     v-model="comment"
                     auto-grow
@@ -52,7 +52,7 @@
             <v-toolbar flat>
                 <v-icon @click="loading ? null : resetPost()">close</v-icon>
                 <v-toolbar-title>
-                    Edit Post
+                    Edit story
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn v-if="edit !== post.post && edit.length > 0" :loading="loading" @click="updatePost">Edit</v-btn>

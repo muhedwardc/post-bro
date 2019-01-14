@@ -27,7 +27,7 @@
             <v-toolbar flat>
                 <v-icon @click="loading ? null : resetComment()">close</v-icon>
                 <v-toolbar-title>
-                    Edit Post
+                    Edit story
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn v-if="commentEdit.text !== commentEdit.editText && commentEdit.editText.length > 0" :loading="loading" @click="updateComment">Edit</v-btn>

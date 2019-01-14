@@ -11,12 +11,13 @@
                 <img :src="user.email ? gravatar(user.email) : gravatar('undefined')" alt="avatar">
             </v-avatar>
             <v-layout column>
-                <h3 class="mb-2">{{ user.name }}</h3>
+                <h3>{{ user.name }}</h3>
+                <span class="blue-grey--text text--darken-2">{{ user.email }}</span>
             </v-layout>
         </v-layout>
         <v-divider class="mt-2"></v-divider>
         <v-layout pa-2 align-center justify-center>
-            <v-icon medium>list_alt</v-icon>&nbsp;{{ posts.length }} post{{ posts.length > 0 ? 's' : null }}
+            <v-icon medium>list_alt</v-icon>&nbsp;{{ posts.length }} post{{ posts.length > 1 ? 's' : null }}
         </v-layout>
         <v-divider class="mb-2"></v-divider>
         <v-layout v-if="!$store.state.loadContent" column>
@@ -46,12 +47,12 @@
             >
             <v-toolbar flat>
                 <v-icon @click="loading ? null : compose = false">close</v-icon>
-                <v-toolbar-title>Compose Post</v-toolbar-title>
+                <v-toolbar-title>Compose story</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn v-if="post" :loading="loading" @click="createPost">post</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
-                <v-textarea label="tulis post anda" rows="3" v-model="post" auto-grow :disabled="loading"></v-textarea>
+                <v-textarea label="what's happening?" rows="3" v-model="post" auto-grow :disabled="loading"></v-textarea>
             </v-layout>
         </v-dialog>
         <v-btn
