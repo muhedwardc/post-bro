@@ -16,7 +16,7 @@
                 </v-avatar>
                 <v-layout column>
                     <h3>{{ post.user.name }}</h3>
-                    <span>tanggal</span>
+                    <span>{{ getPostTime(post.created_at) }} {{ post.created_at !== post.updated_at ? '(edited)' : null }}</span>
                 </v-layout>
             </v-layout>
             <p class="p-show mt-3">{{ post.post }}</p>
@@ -55,7 +55,7 @@
                     Edit Post
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn v-if="edit !== post.post" :loading="loading" @click="updatePost">Edit</v-btn>
+                <v-btn v-if="edit !== post.post && edit.length > 0" :loading="loading" @click="updatePost">Edit</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
                 <v-textarea
@@ -87,7 +87,7 @@
 import appLoading from '../loading'
 import commentList from '../comment/commentList'
 import md5 from 'md5'
-
+import moment from 'moment'
 
 export default {
     components: {
@@ -113,6 +113,11 @@ export default {
     },
 
     methods: {
+        getPostTime(date) {
+            moment.locale('id')
+            return moment(date).fromNow()
+        },
+
         gavatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         },

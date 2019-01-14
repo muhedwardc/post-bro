@@ -9,7 +9,10 @@
                 </v-flex>
                 <v-flex>
                     <v-layout column>
-                        <h4 @click="$router.push({ name: 'User', params: { id: comment.user_id } })">{{ comment.user.name }}</h4>
+                        <v-layout>
+                            <h4 @click="$router.push({ name: 'User', params: { id: comment.user_id } })">{{ comment.user.name }}</h4>
+                            <span>&nbsp; . {{ getPostTime(comment.created_at) }} {{ comment.created_at !== comment.updated_at ? '(edited)' : null }}</span>
+                        </v-layout>
                         <p>{{ comment.comment }}</p>
                     </v-layout>
                 </v-flex>
@@ -27,7 +30,7 @@
                     Edit Post
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn v-if="commentEdit.text !== commentEdit.editText" :loading="loading" @click="updateComment">Edit</v-btn>
+                <v-btn v-if="commentEdit.text !== commentEdit.editText && commentEdit.editText.length > 0" :loading="loading" @click="updateComment">Edit</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
                 <v-textarea
@@ -44,6 +47,8 @@
 
 <script>
 import md5 from 'md5'
+import moment from 'moment'
+
 export default {
     data() {
         return {
@@ -66,6 +71,12 @@ export default {
     },
 
     methods: {
+
+        getPostTime(date) {
+            moment.locale('id')
+            return moment(date).fromNow(true)
+        },
+
         gavatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         },

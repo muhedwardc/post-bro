@@ -30,7 +30,7 @@
                     <v-flex>
                         <v-layout>
                             <h4>{{ user.name }}</h4>
-                            <span class="font-italic" color="grey">&nbsp;. 4h</span>
+                            <span color="grey">&nbsp;. <span>{{ getPostTime(post.created_at) }} {{ post.created_at !== post.updated_at ? '(edited)' : null }}</span></span>
                         </v-layout>
                         <p class="article mb-0">{{ post.post }}</p> 
                     </v-flex>
@@ -64,6 +64,7 @@
             fab
             v-show="!compose"
             @click="compose = true"
+            v-if="thisUser"
         >
             <v-icon>add</v-icon>
         </v-btn>
@@ -74,6 +75,7 @@
 <script>
 import appLoading from '../loading'
 import md5 from 'md5'
+import moment from 'moment'
 
 export default {
     components: {
@@ -89,7 +91,18 @@ export default {
         }
     },
 
+    computed: {
+        thisUser() {
+            return this.$store.state.auth.user.id == this.$router.currentRoute.params.id
+        }
+    },
+
     methods: {
+        getPostTime(date) {
+            moment.locale('id')
+            return moment(date).fromNow(true)
+        },
+
         createPost() {
             console.log(this.post)
         },

@@ -14,7 +14,7 @@
           <v-layout column>
             <v-layout>
               <h4>{{ post.user.name }}</h4>
-              <span class="font-italic" color="grey">&nbsp;. 4h</span>
+              <span color="grey">&nbsp;. {{ getPostTime(post.created_at) }} {{ post.created_at !== post.updated_at ? '(edited)' : null }}</span>
             </v-layout>
             <p class="article mb-0">{{ post.post }}</p>
             <v-layout align-center class="mt-2">
@@ -34,6 +34,7 @@
 
 <script>
 import md5 from 'md5'
+import moment from 'moment'
 
 export default {
     props: {
@@ -45,7 +46,12 @@ export default {
     methods: {
         gavatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
-        }
+        },
+
+        getPostTime(date) {
+            moment.locale('id')
+            return moment(date).fromNow(true)
+        },
     }
 }
 </script>
