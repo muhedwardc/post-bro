@@ -78,7 +78,7 @@
             v-show="!createComment"
             @click="createComment = true"
             >
-            <v-icon>chat_bubble_outline</v-icon>
+            <v-icon>add_comment</v-icon>
         </v-btn>
     </div>
 </template>
