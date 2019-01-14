@@ -51,7 +51,7 @@
                 <v-btn v-if="post" :loading="loading" @click="createPost">post</v-btn>
             </v-toolbar>
             <v-layout class="post-input">
-                <v-textarea label="tulis post anda" rows="3" v-model="post" auto-grow></v-textarea>
+                <v-textarea label="tulis post anda" rows="3" v-model="post" auto-grow :disabled="loading"></v-textarea>
             </v-layout>
         </v-dialog>
         <v-btn
@@ -103,8 +103,52 @@ export default {
             return moment.utc(date).local().fromNow(true)
         },
 
+        async fetchData() {
+            this.$store.state.loadContent = true
+            const userId = this.$router.currentRoute.params.id
+            this.axios.get('/users/' + userId, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.auth.token
+                }
+            })
+                .then(r => r.data)
+                .then(user => {
+                    this.user = user.data
+                })
+
+            this.axios.get('/users/' + userId + '/posts', {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.auth.token
+                }
+            })
+                .then(r => r.data)
+                .then(posts => {
+                    this.posts = posts.data
+                    this.$store.state.loadContent = false
+                })
+        },
+
         createPost() {
-            console.log(this.post)
+            this.loading = true;
+            this.axios
+                .post('/posts', {
+                    post: this.post
+                }, {
+                    headers: {
+                        'Authorization': 'Bearer ' + this.$store.state.auth.token
+                    }
+                })
+                .then(() => {
+                    this.loading = false;
+                    this.posts = []
+                    this.fetchData();
+                    this.compose = false;
+                    this.post = ''
+                    this.$router.push({ name: 'User', params: { id: $store.state.auth.user.id }})
+                })
+                .catch(err => {
+                    this.$store.commit('getContent', false)
+                })
         },
 
         gravatar(email) {
@@ -113,28 +157,7 @@ export default {
     },
 
     created() {
-        this.$store.state.loadContent = true
-        const userId = this.$router.currentRoute.params.id
-        this.axios.get('/users/' + userId, {
-            headers: {
-                'Authorization': 'Bearer ' + this.$store.state.auth.token
-            }
-        })
-            .then(r => r.data)
-            .then(user => {
-                this.user = user.data
-            })
-
-        this.axios.get('/users/' + userId + '/posts', {
-            headers: {
-                'Authorization': 'Bearer ' + this.$store.state.auth.token
-            }
-        })
-            .then(r => r.data)
-            .then(posts => {
-                this.posts = posts.data
-                this.$store.state.loadContent = false
-            })
+        this.fetchData()
     }
 }
 </script>

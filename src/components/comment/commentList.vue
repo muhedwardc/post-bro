@@ -71,7 +71,6 @@ export default {
     },
 
     methods: {
-
         getPostTime(date) {
             moment.locale('id')
             return moment.utc(date).local().fromNow(true)
