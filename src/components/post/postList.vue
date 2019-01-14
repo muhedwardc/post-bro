@@ -50,7 +50,7 @@ export default {
 
         getPostTime(date) {
             moment.locale('id')
-            return moment(date).fromNow(true)
+            return moment.utc(date).local().fromNow(true)
         },
     }
 }

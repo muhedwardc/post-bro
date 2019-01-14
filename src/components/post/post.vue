@@ -115,7 +115,7 @@ export default {
     methods: {
         getPostTime(date) {
             moment.locale('id')
-            return moment(date).fromNow()
+            return moment.utc(date).local().fromNow()
         },
 
         gavatar(email) {
