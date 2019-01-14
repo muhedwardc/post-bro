@@ -12,7 +12,7 @@
         <v-layout v-if="notLoading" class="post-content content" column>
             <v-layout align-center class="post" @click="$router.push({ name: 'User', params: { id: post.user_id } })">
                 <v-avatar size="48px" class="mr-2">
-                    <img :src="post.user.email ? gavatar(post.user.email) : 'undefined'" alt="avatar">
+                    <img :src="post.user.email ? gravatar(post.user.email) : 'undefined'" alt="avatar">
                 </v-avatar>
                 <v-layout column>
                     <h3>{{ post.user.name }}</h3>
@@ -118,7 +118,7 @@ export default {
             return moment.utc(date).local().fromNow()
         },
 
-        gavatar(email) {
+        gravatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         },
         

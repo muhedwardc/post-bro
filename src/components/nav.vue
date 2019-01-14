@@ -3,7 +3,7 @@
         <v-list class="pa">
             <v-list-tile avatar>
                 <v-list-tile-avatar>
-                    <img :src="$store.state.auth.user.email ? gavatar($store.state.auth.user.email) : gavatar('undefined')" alt="avatar">
+                    <img :src="$store.state.auth.user.email ? gravatar($store.state.auth.user.email) : gravatar('undefined')" alt="avatar">
                 </v-list-tile-avatar>
 
                 <v-list-tile-content>
@@ -56,7 +56,7 @@ export default {
             }
         },
         
-        gavatar(email) {
+        gravatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     }

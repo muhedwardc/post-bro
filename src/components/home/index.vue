@@ -4,7 +4,7 @@
       <v-toolbar-title>
         <v-layout align-center>
           <v-avatar @click.stop="drawer = !drawer" size="36px">
-            <img :src="gavatar($store.state.auth.user.email)" alt="avatar">
+            <img :src="gravatar($store.state.auth.user.email)" alt="avatar">
           </v-avatar>
           <span class="ml-3">{{ title }}</span>
         </v-layout>
@@ -86,7 +86,7 @@ export default {
   },
 
   methods: {
-    gavatar(email) {
+    gravatar(email) {
       return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
     },
     createPost() {

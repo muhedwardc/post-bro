@@ -8,7 +8,7 @@
         </v-toolbar>
         <v-layout align-center class="user-info content profile-header">
             <v-avatar size="72px" class="mr-3">
-                <img :src="user.email ? gavatar(user.email) : gavatar('undefined')" alt="avatar">
+                <img :src="user.email ? gravatar(user.email) : gravatar('undefined')" alt="avatar">
             </v-avatar>
             <v-layout column>
                 <h3 class="mb-2">{{ user.name }}</h3>
@@ -24,7 +24,7 @@
                 <v-layout @click="$router.push({ name: 'Show', params: { id: post.id } })" class="post-content post">
                     <v-flex shrink>
                         <v-avatar size="48px">
-                            <img :src="user.email ? gavatar(user.email) : gavatar('undefined')" alt="avatar">
+                            <img :src="user.email ? gravatar(user.email) : gravatar('undefined')" alt="avatar">
                         </v-avatar>
                     </v-flex>
                     <v-flex>
@@ -107,7 +107,7 @@ export default {
             console.log(this.post)
         },
 
-        gavatar(email) {
+        gravatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         }
     },

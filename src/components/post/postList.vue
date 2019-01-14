@@ -7,7 +7,7 @@
       >
         <v-flex shrink>
           <v-avatar class="mb-3" size="48px">
-            <img :src="gavatar(post.user.email)" alt="avatar">
+            <img :src="gravatar(post.user.email)" alt="avatar">
           </v-avatar>
         </v-flex>
         <v-flex>
@@ -44,7 +44,7 @@ export default {
     },
 
     methods: {
-        gavatar(email) {
+        gravatar(email) {
             return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
         },
 
