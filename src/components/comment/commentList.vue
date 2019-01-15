@@ -4,7 +4,7 @@
             <v-layout class="comment-item">
                 <v-flex shrink @click="$router.push({ name: 'User', params: { id: comment.user_id } })">
                     <v-avatar size="48px" class="mr-2">
-                        <img :src="comment.user.email ? gravatar(comment.user.email) : 'undefined'" alt="avatar">
+                        <img :src="comment.user.email ? gravatar(comment.user.email) : gravatar('undefined')" alt="avatar">
                     </v-avatar>
                 </v-flex>
                 <v-flex>
