@@ -6,15 +6,53 @@
                 Story
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn v-if="post.user_id == $store.state.auth.user.id" @click="editPost">edit</v-btn>
+            <div v-if="post.user_id == $store.state.auth.user.id">
+                <v-menu>
+                    <v-icon 
+                        slot="activator"
+                        flat
+                        ripple
+                        medium>more_vert
+                    </v-icon>
+                    <v-list>
+                        <v-list-tile @click="editPost" >
+                            <v-list-tile-title>Edit</v-list-tile-title>
+                        </v-list-tile>
+                        <v-divider></v-divider>
+                        <v-list-tile @click="deleteDialog = true" >
+                            <v-list-tile-title>
+                                <span slot="activator" class="red--text" flat>Delete</span>
+                                <v-dialog v-model="deleteDialog" persistent max-width="290">
+                                    <v-card v-if="!deleting">
+                                        <v-card-title class="subheading">Delete your story?</v-card-title>
+                                        <v-card-actions>
+                                        <v-spacer></v-spacer>
+                                        <v-btn flat @click="deleteDialog = false">No</v-btn>
+                                        <v-btn color="red" flat @click="deletePost">Sure</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                    <v-card v-else class="text-xs-center pa-4">
+                                        <h2 class="black--text subheading mb-4">Deleting</h2>
+                                        <v-progress-circular
+                                            :size="50"
+                                            color="primary"
+                                            indeterminate
+                                            ></v-progress-circular>
+                                    </v-card>
+                                </v-dialog>
+                            </v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+            </div>
         </v-toolbar>
         <app-loading class="content" v-if="!notLoading"></app-loading>
         <v-layout v-if="notLoading" class="post-content content" column>
-            <v-layout align-center class="post" @click="$router.push({ name: 'User', params: { id: post.user_id } })">
-                <v-avatar size="48px" class="mr-2">
+            <v-layout align-center class="post">
+                <v-avatar size="48px" class="mr-2" @click="$router.push({ name: 'User', params: { id: post.user_id } })">
                     <img :src="post.user.email ? gravatar(post.user.email) : 'undefined'" alt="avatar">
                 </v-avatar>
-                <v-layout column>
+                <v-layout column shrink @click="$router.push({ name: 'User', params: { id: post.user_id } })">
                     <h3>{{ post.user.name }}</h3>
                     <span>{{ getPostTime(post.created_at) }} {{ post.created_at !== post.updated_at ? '(edited)' : null }}</span>
                 </v-layout>
@@ -80,19 +118,22 @@
             >
             <v-icon>add_comment</v-icon>
         </v-btn>
+        <app-snackbar></app-snackbar>
     </div>
 </template>
 
 <script>
 import appLoading from '../loading'
 import commentList from '../comment/commentList'
+import appSnackbar from '../snackbar'
 import md5 from 'md5'
 import moment from 'moment'
 
 export default {
     components: {
         appLoading,
-        commentList
+        commentList,
+        appSnackbar
     },
 
     data() {
@@ -108,7 +149,9 @@ export default {
             comments: [],
             comment: '',
             edit: '',
-            loading: false
+            loading: false,
+            deleteDialog: false,
+            deleting: false
         }
     },
 
@@ -132,6 +175,23 @@ export default {
             this.edit = this.post.post
         },
 
+        deletePost() {
+            this.deleting = true
+            this.axios.delete('/posts/' + this.postId, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.auth.token
+                }
+            })
+            .then(() => {
+                this.deleting = false
+                this.$router.push({ name: 'Home' })
+            })
+            .catch(err => {
+                this.deleting = false
+                this.$store.commit('displayMessage', err.message)
+            })
+        },
+
         async updatePost() {
             this.loading = true
             this.axios.put('/posts/' + this.postId, {
@@ -146,10 +206,10 @@ export default {
                 this.loading = false
                 this.editDialog = false
                 this.fetchPost()
-                    .catch(err => this.$store.commit('displayError', err.message))
+                    .catch(err => this.$store.commit('displayMessage', err.message))
                 this.$router.push({ name: 'Show', params: { id: this.postId }})
             })
-            .catch(err => this.$store.commit('displayError', err.message))
+            .catch(err => this.$store.commit('displayMessage', err.message))
         },
 
         async addComment() {
@@ -166,10 +226,10 @@ export default {
                 this.loading = false
                 this.createComment = false
                 this.fetchComment()
-                    .catch(err => this.$store.commit('displayError', err.message))
+                    .catch(err => this.$store.commit('displayMessage', err.message))
                 this.$router.push({ name: 'Show', params: { id: this.postId }})
             })
-            .catch(err => this.$store.commit('displayError', err.message))
+            .catch(err => this.$store.commit('displayMessage', err.message))
         },
 
         async fetchPost() {
@@ -195,12 +255,12 @@ export default {
                     })
                     .catch(err => {
                         this.load.post = false
-                        this.$store.commit('displayError', err.message)
+                        this.$store.commit('displayMessage', err.message)
                     })
             })
             .catch(err => {
                 this.load.post = false
-                this.$store.commit('displayError', err.message)
+                this.$store.commit('displayMessage', err.message)
             })
         },
 
@@ -218,7 +278,7 @@ export default {
             })
             .catch(err => {
                 this.load.comments = false
-                this.$store.commit('displayError', err.message)
+                this.$store.commit('displayMessage', err.message)
             })
         },
     },

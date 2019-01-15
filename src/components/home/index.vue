@@ -89,6 +89,7 @@ export default {
     gravatar(email) {
       return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
     },
+
     createPost() {
       this.loading = true;
       this.axios
@@ -103,6 +104,7 @@ export default {
           this.loading = false;
           this.compose = false;
           this.$router.push({ name: 'Home' })
+          this.post = ''
           this.page = 0
           this.posts = []
           this.fetchData();

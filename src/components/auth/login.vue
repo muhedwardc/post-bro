@@ -94,12 +94,12 @@ export default {
                     Cookie.remove('_tkn')
                     Cookie.remove('_user')
                     this.loading = false
-                    if (status == '401') this.$store.commit('displayError', 'Wrong email & password combination (401)')
-                    else this.$store.commit('displayError', err.message)  
+                    if (status == '401') this.$store.commit('displayMessage', 'Wrong email & password combination (401)')
+                    else this.$store.commit('displayMessage', err.message)  
                 })
             } else {
                 this.loading = false
-                this.$store.commit('displayError', 'Invalid Input')
+                this.$store.commit('displayMessage', 'Invalid Input')
             }
         },
 
