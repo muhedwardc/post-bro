@@ -8,9 +8,9 @@ export const store = new Vuex.Store({
         auth: {
             token: '',
             user: {
-                id: 1,
-                name: 'Muhammad Edward',
-                email: 'muhedwardc@gmail.com'
+                id: '',
+                name: '',
+                email: ''
             }
         },
         drawer: false,
