@@ -29,18 +29,24 @@
       </v-layout>
       <v-divider></v-divider>
     </v-layout>
+    <app-snackbar></app-snackbar>
   </div>
 </template>
 
 <script>
 import md5 from 'md5'
 import moment from 'moment'
+import appSnackbar from '../snackbar'
 
 export default {
     props: {
         posts: {
             type: Array
         }
+    },
+
+    components: {
+      appSnackbar
     },
 
     methods: {

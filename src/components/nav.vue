@@ -52,7 +52,7 @@ export default {
                 this.$store.state.auth.token = ''
                 this.$router.push({ name: 'Login' })
             } catch (err) {
-                this.$store.commit('displayError', err.message)
+                this.$store.commit('displayMessage', err.message)
             }
         },
         

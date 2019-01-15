@@ -79,9 +79,8 @@ export default {
                     })
                         .then(r => r.data)
                         .then(user => {
-                            const exp = user.expires_in/60/60/24
-                            Cookie.set('_user', user, { expires: exp })
-                            Cookie.set('_tkn', token, { expires: exp})
+                            Cookie.set('_user', user)
+                            Cookie.set('_tkn', token)
                             this.$store.state.auth.token = user.token
                             this.$store.state.auth.user = user
                             this.loading = false
@@ -94,12 +93,12 @@ export default {
                     Cookie.remove('_tkn')
                     Cookie.remove('_user')
                     this.loading = false
-                    if (status == '401') this.$store.commit('displayError', 'Wrong email & password combination (401)')
-                    else this.$store.commit('displayError', err.message)  
+                    if (status == '401') this.$store.commit('displayMessage', 'Wrong email & password combination (401)')
+                    else this.$store.commit('displayMessage', err.message)  
                 })
             } else {
                 this.loading = false
-                this.$store.commit('displayError', 'Invalid Input')
+                this.$store.commit('displayMessage', 'Invalid Input')
             }
         },
 

@@ -5,13 +5,15 @@
       :left="x === 'left'"
       :multi-line="mode === 'multi-line'"
       :right="x === 'right'"
-      :timeout="timeout"
+      :timeout="$store.state.snackbar.success ? 2000 : timeout"
       :top="y === 'top'"
       :vertical="mode === 'vertical'"
+      class="white--text"
+      :color="$store.state.snackbar.success ? 'green' : 'pink'"
     >
       {{ $store.state.snackbar.message }}
       <v-btn
-        color="pink"
+        color="white"
         flat
         @click="$store.state.snackbar.show = false"
       >
@@ -22,6 +24,12 @@
 
 <script>
 export default {
+    props: {
+      success: {
+        type: Boolean
+      }
+    },
+
     data() {
         return {
             y: 'top',

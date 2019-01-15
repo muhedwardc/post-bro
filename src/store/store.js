@@ -8,25 +8,27 @@ export const store = new Vuex.Store({
         auth: {
             token: '',
             user: {
-                id: 1,
-                name: 'Muhammad Edward',
-                email: 'muhedwardc@gmail.com'
+                id: '',
+                name: '',
+                email: ''
             }
         },
         drawer: false,
         snackbar: {
             show: false,
-            message: ''
+            message: '',
+            success: false
         },
         loadContent: false,
         loadPostContent: false
     },
 
     mutations: {
-        displayError(state, error) {
+        displayMessage(state, payload) {
             state.snackbar = {
                 show: true,
-                message: error
+                message: payload.message ? payload.message : payload,
+                success: payload.success ? payload.success : false
             }
         },
 

@@ -110,9 +110,8 @@ export default {
                         })
                             .then(r => r.data)
                             .then(user => {
-                                const exp = user.expires_in/60/60/24
-                                Cookie.set('_user', user, { expires: exp })
-                                Cookie.set('_tkn', token, { expires: exp})
+                                Cookie.set('_user', user)
+                                Cookie.set('_tkn', token)
                                 this.$store.state.auth.token = user.token
                                 this.$store.state.auth.user = user
                                 this.loading = false
@@ -125,7 +124,7 @@ export default {
                         Cookie.remove('_tkn')
                         Cookie.remove('_user')
                         this.loading = false
-                        this.$store.commit('displayError', err.message)  
+                        this.$store.commit('displayMessage', err.message)  
                     })
                 })
                 .then(() => this.$router.replace({ name: 'Home' }))
@@ -133,8 +132,8 @@ export default {
                     this.loading = false
                     let status = err.message.split(' ')
                     status = status[status.length-1]
-                    if (status == 500) this.$store.commit('displayError', 'Email sudah digunakan (500)')
-                    else this.$store.commit('displayError', err.message)
+                    if (status == 500) this.$store.commit('displayMessage', 'Email sudah digunakan (500)')
+                    else this.$store.commit('displayMessage', err.message)
                 })
             } else {
                 this.loading = false
