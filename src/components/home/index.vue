@@ -25,12 +25,12 @@
     >
       <v-toolbar flat>
         <v-icon @click="loading ? null : compose = false">close</v-icon>
-        <v-toolbar-title>Compose Post</v-toolbar-title>
+        <v-toolbar-title>Compose story</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn v-if="post" :loading="loading" @click="createPost">post</v-btn>
       </v-toolbar>
       <v-layout class="post-input">
-        <v-textarea label="tulis post anda" rows="3" v-model="post" auto-grow></v-textarea>
+        <v-textarea label="what's happening?" rows="3" v-model="post" auto-grow></v-textarea>
       </v-layout>
     </v-dialog>
     <v-btn
@@ -89,6 +89,7 @@ export default {
     gravatar(email) {
       return 'https://www.gravatar.com/avatar/' + md5(email) + '?d=mp'
     },
+
     createPost() {
       this.loading = true;
       this.axios
@@ -103,6 +104,7 @@ export default {
           this.loading = false;
           this.compose = false;
           this.$router.push({ name: 'Home' })
+          this.post = ''
           this.page = 0
           this.posts = []
           this.fetchData();

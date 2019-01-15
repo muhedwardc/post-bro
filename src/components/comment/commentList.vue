@@ -4,20 +4,58 @@
             <v-layout class="comment-item">
                 <v-flex shrink @click="$router.push({ name: 'User', params: { id: comment.user_id } })">
                     <v-avatar size="48px" class="mr-2">
-                        <img :src="comment.user.email ? gravatar(comment.user.email) : 'undefined'" alt="avatar">
+                        <img :src="comment.user.email ? gravatar(comment.user.email) : gravatar('undefined')" alt="avatar">
                     </v-avatar>
                 </v-flex>
                 <v-flex>
                     <v-layout column>
                         <v-layout>
                             <h4 @click="$router.push({ name: 'User', params: { id: comment.user_id } })">{{ comment.user.name }}</h4>
-                            <span>&nbsp; . {{ getPostTime(comment.created_at) }} {{ comment.created_at !== comment.updated_at ? '(edited)' : null }}</span>
+                            <span>&nbsp;. {{ getPostTime(comment.created_at) }} {{ comment.created_at !== comment.updated_at ? '(edited)' : null }}</span>
                         </v-layout>
                         <p>{{ comment.comment }}</p>
                     </v-layout>
                 </v-flex>
                 <v-flex shrink v-if="comment.user.id == $store.state.auth.user.id">
-                    <v-icon flat ripple @click="editComment(comment.post_id, comment.id, comment.comment)">more_vert</v-icon>
+                    <v-menu>
+                        <v-icon 
+                            slot="activator"
+                            flat
+                            ripple
+                            medium>more_vert
+                        </v-icon>
+                        <v-list>
+                            <v-list-tile @click="editComment(comment.post_id, comment.id, comment.comment)" >
+                                <v-list-tile-title>Edit</v-list-tile-title>
+                            </v-list-tile>
+                            <v-divider></v-divider>
+                            <v-list-tile @click="deleteDialog = true">
+                                <v-list-tile-title>
+                                    <v-menu>
+                                        <span slot="activator" class="red--text" flat>Delete</span>
+                                        <v-dialog v-model="deleteDialog" persistent max-width="290">
+                                            <v-card v-if="!loadingDelete">
+                                                <v-card-title class="subheading">Delete your comment?</v-card-title>
+                                                <v-card-actions>
+                                                <v-spacer></v-spacer>
+                                                <v-btn flat @click="deleteDialog = false">No</v-btn>
+                                                <v-btn color="red" flat @click="deleteComment(comment.post_id, comment.id)">Sure</v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                            <v-card v-else class="text-xs-center pa-4">
+                                                <h2 class="black--text subheading mb-4">Deleting</h2>
+                                                <v-progress-circular
+                                                    :size="50"
+                                                    color="primary"
+                                                    indeterminate
+                                                    ></v-progress-circular>
+                                            </v-card>
+                                        </v-dialog>
+                                    </v-menu>
+                                </v-list-tile-title>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu>
                 </v-flex>
             </v-layout>
             <v-divider></v-divider>
@@ -27,7 +65,7 @@
             <v-toolbar flat>
                 <v-icon @click="loading ? null : resetComment()">close</v-icon>
                 <v-toolbar-title>
-                    Edit Post
+                    Edit story
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn v-if="commentEdit.text !== commentEdit.editText && commentEdit.editText.length > 0" :loading="loading" @click="updateComment">Edit</v-btn>
@@ -42,17 +80,21 @@
                 </v-textarea>
             </v-layout>
         </v-dialog>
+        <app-snackbar></app-snackbar>
     </div>
 </template>
 
 <script>
 import md5 from 'md5'
 import moment from 'moment'
+import appSnackbar from '../snackbar'
 
 export default {
     data() {
         return {
             loading: false,
+            loadingDelete: false,
+            deleteDialog: false,
             commentEdit: {
                 post_id: '',
                 id: '',
@@ -63,6 +105,10 @@ export default {
         }
     },
 
+    components: {
+      appSnackbar
+    },
+
     props: {
         comments: {
             type: Array,
@@ -71,7 +117,6 @@ export default {
     },
 
     methods: {
-
         getPostTime(date) {
             moment.locale('id')
             return moment.utc(date).local().fromNow(true)
@@ -94,6 +139,21 @@ export default {
             this.commentEdit.show = true
         },
 
+        deleteComment(postId, commentId) {
+            this.loadingDelete = true
+            this.axios.delete(`/posts/${postId}/comments/${commentId}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.$store.state.auth.token
+                }
+            })
+            .then(() => {
+                this.loadingDelete = false
+                this.deleteDialog = false
+                this.$emit('update-comment')
+                this.$router.push({ name: 'Show', params: { id: postId }})
+            })
+        },
+
         updateComment() {
             this.loading = true
             this.axios.put(`/posts/${this.commentEdit.post_id}/comments/${this.commentEdit.id}`, {
@@ -111,7 +171,7 @@ export default {
             })
             .catch(err => {
                 this.loading = false
-                this.$store.commit('displayError', err.message)
+                this.$store.commit('displayMessage', err.message)
             })
         }
     }
