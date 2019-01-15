@@ -79,9 +79,8 @@ export default {
                     })
                         .then(r => r.data)
                         .then(user => {
-                            const exp = user.expires_in/60/60/24
-                            Cookie.set('_user', user, { expires: exp })
-                            Cookie.set('_tkn', token, { expires: exp})
+                            Cookie.set('_user', user)
+                            Cookie.set('_tkn', token)
                             this.$store.state.auth.token = user.token
                             this.$store.state.auth.user = user
                             this.loading = false
