@@ -38,4 +38,11 @@ if (workbox) {
         ],
     }),
     );
+
+    workbox.routing.registerRoute(
+    new RegExp('https://cdn.onesignal.com/sdks/OneSignalSDK.js'),
+    workbox.strategies.networkFirst({
+        cacheName: 'onesignal',
+    }),
+    );
 }
