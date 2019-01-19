@@ -1,6 +1,8 @@
 {
   "name": "Jala Story",
   "short_name": "Jala Story",
+  "gcm_sender_id_comment": "For OneSignal Web Push Notifications, Do Not Change ID",
+  "gcm_sender_id": "482941778795",
   "icons": [
     {
       "src": "./img/icons/ms-icon-150x150.png",

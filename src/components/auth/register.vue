@@ -115,6 +115,11 @@ export default {
                                 this.$store.state.auth.token = user.token
                                 this.$store.state.auth.user = user
                                 this.loading = false
+                                // OneSignal.push(function() {
+                                //     OneSignal.sendTags({
+                                //         email: user.email
+                                //     });
+                                // });
                                 this.$router.replace({ name: 'Home' })
                             })
                     })

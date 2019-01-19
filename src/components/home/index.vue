@@ -137,7 +137,7 @@ export default {
           this.$store.state.snackbar.message = err.message
           this.$store.state.snackbar.show = true
         });
-    }
+    },
   },
 
   computed: {
@@ -160,6 +160,24 @@ export default {
         } 
       }
     };
+
+    OneSignal.push(() => {
+      OneSignal.on('subscriptionChange', (isSubscribed) => {
+        if (isSubscribed) {
+          OneSignal.sendTags({
+            email: this.$store.state.auth.user.email
+          })
+          .then(r => console.log(r))
+          .catch(err => this.$store.commit('displayMessage', err.message))
+        }
+      });
+      OneSignal.isPushNotificationsEnabled().then((isEnabled) => {
+        console.log('isEnabled: ' + isEnabled)
+        if (!isEnabled) {
+          OneSignal.showHttpPrompt({force: true})
+        }
+      });
+    })
   }
 };
 </script>
