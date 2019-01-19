@@ -13,17 +13,6 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_API_URL;
 
 Vue.use(VueAxios, axios)
 
-var OneSignal = window.OneSignal || [];
-OneSignal.push(function() {
-	OneSignal.init({
-		appId: process.env.VUE_APP_ONE_SIGNAL_APP_ID,
-    autoRegister: false,
-    notifyButton: {
-      enable: true,
-    },
-	});
-});
-
 new Vue({
   router,
   store,

@@ -15,7 +15,23 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
     <link rel="stylesheet" href="./main.css">
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+    <script>
+      var OneSignal = window.OneSignal || [];
+      OneSignal.push(["init", {
+        appId: "<%= VUE_APP_ONE_SIGNAL_APP_ID %>",
+        autoRegister: false,
+        welcomeNotification: {
+          "title": "Thanks!",
+          "message": "Have a nice day :)",
+        },
+        promptOptions: {
+          actionMessage: "We'd like to show you notifications for the latest stories and updates.",
+          acceptButtonText: "ALLOW",
+          cancelButtonText: "NO THANKS"
+        }
+      }]);
+    </script>
   </head>
   <body>
     <noscript>
