@@ -157,7 +157,7 @@ export default {
       if (bottomOfWindow) {
         if (this.page < this.lastPage){
           this.fetchData()
-        } 
+        }
       }
     };
 
@@ -171,9 +171,11 @@ export default {
           .catch(err => this.$store.commit('displayMessage', err.message))
         }
       });
-      OneSignal.isPushNotificationsEnabled().then((isEnabled) => {
-        console.log('isEnabled: ' + isEnabled)
-        if (!isEnabled) {
+      OneSignal.getNotificationPermission().then((permission) => {
+        if (permission === 'granted') {
+          OneSignal.registerForPushNotifications();
+        }
+        else {
           OneSignal.showHttpPrompt({force: true})
         }
       });
@@ -219,5 +221,3 @@ export default {
   padding-bottom: 16px;
 }
 </style>
-
-
