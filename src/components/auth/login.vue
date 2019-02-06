@@ -27,20 +27,14 @@
                 <router-link v-if="!loading" class="text-xs-center blue--text mt-2" :to="{ name: 'Register' }">Register</router-link>
             </v-layout>
         </v-form>
-        <app-snackbar></app-snackbar>
     </v-layout>
 </template>
 
 <script>
 
 import Cookie from 'js-cookie'
-import AppSnackbar from '../snackbar'
 
 export default {
-    components: {
-        AppSnackbar
-    },
-
     data() {
         return {
             email: '',

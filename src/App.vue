@@ -19,10 +19,12 @@ export default {
 
 .application--wrap {
   background-color: white;
+  min-height: 100vh;
 }
 
 .v-toolbar__content {
-  border-bottom: 1px solid #b1b6ba;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 
 a {
@@ -30,17 +32,17 @@ a {
   color: black !important;
 }
 
+a.link {
+    color: #2196f3 !important;
+}
+
+.item-content > * {
+  margin-bottom: 0 !important;
+}
+
 .content {
-  margin-top: 56px;
-  height: calc(100% - 56px);
-}
-
-.post-content {
-  padding: 16px 5px;
-}
-
-.post-content > div {
-  margin: 0 5px;
+  margin-top: 49px;
+  height: calc(100% - 49px);
 }
 
 p.article {
@@ -51,6 +53,11 @@ p.article {
   cursor: pointer;
 }
 
+.v-toolbar,
+.v-toolbar__content {
+  height: 49px !important;
+}
+
 @media screen and (min-width: 560px){
   .application--wrap {
     background-color: #b1b6ba;
@@ -58,7 +65,8 @@ p.article {
 
   .application--wrap > div {
     width: 560px;
-    padding: 0 16px;
+    min-height: 100vh;
+    padding: 0;
     margin: 0 auto;
     background-color: white;
   }

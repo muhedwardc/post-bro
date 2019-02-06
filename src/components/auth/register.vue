@@ -44,19 +44,13 @@
                 <router-link v-if="!loading" class="text-xs-center blue--text mt-2" :to="{ name: 'Login' }">Login</router-link>
             </v-layout>
         </v-form>
-        <app-snackbar></app-snackbar>
     </v-layout>
 </template>
 
 <script>
 import Cookie from 'js-cookie'
-import AppSnackbar from '../snackbar'
 
-export default {
-    components: {
-        AppSnackbar
-    },
-    
+export default {    
     data() {
         return {
             email: '',
@@ -115,11 +109,6 @@ export default {
                                 this.$store.state.auth.token = user.token
                                 this.$store.state.auth.user = user
                                 this.loading = false
-                                // OneSignal.push(function() {
-                                //     OneSignal.sendTags({
-                                //         email: user.email
-                                //     });
-                                // });
                                 this.$router.replace({ name: 'Home' })
                             })
                     })
