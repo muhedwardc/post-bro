@@ -32,12 +32,23 @@ a {
   color: black !important;
 }
 
-a.link {
-    color: #2196f3 !important;
-}
-
 .item-content > * {
   margin-bottom: 0 !important;
+}
+
+.item-content a {
+  color: #2196f3 !important;
+}
+
+.item-content a:hover {
+  text-decoration: underline;
+}
+
+.item-content img {
+  max-width: 100% !important;
+  display: block;
+  border-radius: 4px;
+  margin: 4px 0;
 }
 
 .content {
