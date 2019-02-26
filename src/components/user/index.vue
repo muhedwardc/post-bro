@@ -10,7 +10,7 @@
             <profile-header :user="user"></profile-header>
             <v-divider class="mt-2"></v-divider>
             <v-layout pa-2 align-center justify-center>
-                <v-icon medium>list_alt</v-icon>&nbsp;{{ posts.length }} post{{ posts.length > 1 ? 's' : null }}
+                <v-icon medium>list_alt</v-icon>&nbsp;{{ totalPosts }} post{{ totalPosts > 1 ? 's' : null }}
             </v-layout>
             <v-divider class="mb-2"></v-divider>
             <v-layout column>
@@ -49,6 +49,8 @@ export default {
             loadUser: false,
             loadPost: false,
             loading: false,
+            totalPosts: 0,
+            isFetchingPost: false,
             composer: {
                 type: 'story',
                 action: 'compose',
@@ -93,6 +95,7 @@ export default {
 
         async fetchPost() {
             this.loadPost = true
+            this.isFetchingPost = true
             this.$store.commit('getContent', true)
             this.page += 1
             this.axios.get('/users/' + this.userId + '/posts?with=user&per_page=' + this.perPage + '&page=' + this.page, {
@@ -102,6 +105,7 @@ export default {
             })
                 .then(r => r.data)
                 .then(posts => {
+                    this.totalPosts = posts.meta.total
                     const temp = this.posts.concat(posts.data)
                     this.posts = temp
                     this.lastPage = posts.meta.last_page
@@ -117,10 +121,10 @@ export default {
         },
 
         loadOnScroll() {
-            let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+            let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight - 20;
 
-            if (bottomOfWindow) {
-                if (this.page <= this.lastPage){
+            if (bottomOfWindow && !this.loadPost) {
+                if (this.page <= this.lastPage && !this.loadPost){
                     this.fetchPost()
                 } else {
                     this.$store.commit('getContent', false)

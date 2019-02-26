@@ -68,10 +68,10 @@ export default {
     },
 
     loadOnScroll() {
-      let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+      let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight - 20;
 
-      if (bottomOfWindow) {
-        if (this.page <= this.lastPage){
+      if (bottomOfWindow && !this.loadPost) {
+        if (this.page <= this.lastPage && !this.loadPost){
           this.fetchData()
         } else {
           this.$store.commit('getContent', false)
@@ -98,6 +98,7 @@ export default {
     },
 
     fetchData() {
+      this.loadPost = true
       this.$store.commit('getContent', true)
       this.user = this.$store.state.auth.user;
       this.page += 1
@@ -117,6 +118,7 @@ export default {
         })
         .catch(err => {
           this.page -= 1
+          this.loadPost = false
           this.$store.commit('getContent', false)
           this.$store.commit('displayMessage', err.message)
         });

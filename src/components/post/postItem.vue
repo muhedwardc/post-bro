@@ -1,7 +1,6 @@
 <template>
     <v-layout
         class="post-content"
-        @click="$router.push({ name: 'Show', params: { id: post.id } })"
       >
         <v-flex shrink>
           <v-avatar class="mb" size="41px">
@@ -10,23 +9,32 @@
         </v-flex>
         <v-flex>
           <v-layout column class="pl-1 pr-1">
-            <v-layout wrap>
+            <v-layout wrap 
+                style="cursor: pointer;"
+                @click="$router.push({ name: 'Show', params: { id: post.id } })">
               <h4>{{ post.user.name }}</h4>
               <span color="grey">&nbsp;. {{ getPostTime(post.created_at) }} {{ post.created_at !== post.updated_at ? '(edited)' : null }}</span>
             </v-layout>
-            <div class="item-content mt-0 mb-0" style="word-break: break-word;" v-html="$store.getters.markedText(text)"></div>
+            <div @click="$router.push({ name: 'Show', params: { id: post.id } })" class="item-content mt-0 mb-0" style="word-break: break-word;" v-html="$store.getters.markedText(text)"></div>
             <!-- <div v-if="isGiphy" class="giphy-container ma-0">
                 <img :src="giphyURL" style="width: 100%; border-radius: 4px; display: block;">
             </div> -->
-            <v-layout v-if="commentsCount" align-center class="mt-2">
-              <v-flex xs12>
-                <v-layout align-center>
-                  <v-icon class="mr-2">chat_bubble_outline</v-icon>{{ post.comments_count }}
+            <v-layout class="mt-2" v-if="commentsCount" align-center>
+                <v-layout class="story-attribute" justify-space-between align-center>
+					<v-layout align-center @click="$router.push({ name: 'Show', params: { id: post.id } })"  style="flex-grow: unset;" class="caption">
+						{{ emotions }} Likes&nbsp;&nbsp;
+						{{ post.comments_count }} Comments
+					</v-layout>
+                    <img @click="emotionClick" :src="require('@/assets/emotions/' + showedEmotion + '.png')" class="mr-2"/>
+                    <v-layout v-if="showEmotionsPicker" class="emotions-picker" align-center>
+                        <img v-for="index in 5" @click="setEmotion(index)" :src="require('@/assets/emotions/' + index + '.png')"/>	
+                        <v-icon @click="setEmotion(0)">close</v-icon>
+                    </v-layout>
                 </v-layout>
-              </v-flex>
             </v-layout>
           </v-layout>
         </v-flex>
+        <div class="backdrop" @click="showEmotionsPicker = false" v-if="showEmotionsPicker"></div>
     </v-layout>
 </template>
 
@@ -46,13 +54,23 @@ export default {
     data() {
         return {
             giphyURL: '',
-            text: ''
+			text: '',
+            showEmotionsPicker: false,
+			emotions: 4,
+			userEmotion: {
+                type: null,
+                id: null
+            }
         }
     },
 
     computed: {
         isGiphy() {
             return this.post.post.match(/^\/giphy\shttps:\/\/.+\.gif\s+.+/);
+        },
+
+		showedEmotion() {
+			return this.userEmotion.type ? this.userEmotion.type : 0
         }
     },
 
@@ -63,6 +81,17 @@ export default {
 
         getPostTime(date) {
             return this.$store.getters.getTime(date)
+		},
+
+        emotionClick() {
+            this.showEmotionsPicker = !this.showEmotionsPicker
+        },
+        
+        setEmotion(type) {
+            if (type === 0 && this.userEmotion.type) this.emotions -= 1 
+            else if (type !== 0 && !this.userEmotion.type) this.emotions += 1
+            this.showEmotionsPicker = false
+            this.userEmotion.type = type
         }
     },
 
@@ -102,6 +131,47 @@ export default {
 
     .giphy-container {
         min-height: 160px;
+    }
+
+    .story-attribute {
+		position: relative;
+    }
+
+	.story-attribute img {
+		height: 20px;
+		width: 20px;
+	}
+
+	.story-attribute > * {
+		cursor: pointer;
+	}
+
+    .emotions-picker {
+        background-color: white;
+        position: absolute;
+        bottom: 26px;
+        right: 0px;
+        box-shadow: 0px 1px 2px rgba(0, 0, 0, .2);
+        border-radius: 2px;
+        z-index: 4;
+    }
+
+    .emotions-picker > img,
+    .emotions-picker > * {
+        width: 24px;
+        height: 24px;
+        box-sizing: content-box;
+        padding: 8px 10px;
+    }
+
+    .backdrop {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background-color: transparent;
     }
 </style>
 

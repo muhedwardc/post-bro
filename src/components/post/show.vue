@@ -64,10 +64,17 @@
                         <img :src="giphyURL" style="width: 100%; border-radius: 4px; display: block;">
                     </div> -->
                 </v-layout>
-                <v-divider></v-divider>
-                    <v-layout pa-2 align-center justify-center>
-                        <v-icon medium>chat_bubble_outline</v-icon>&nbsp;{{ comments.length }} comment{{ comments.length > 1 ? 's' : null }}
+                <v-layout class="story-attribute pl-2 pr-2 pb-2" justify-space-between align-center>
+					<v-layout align-center @click="$router.push({ name: 'Show', params: { id: post.id } })"  style="flex-grow: unset;" class="caption">
+						{{ emotions }} Likes&nbsp;&nbsp;
+						{{ post.comments_count }} Comments
+					</v-layout>
+                    <img @click="emotionClick" :src="require('@/assets/emotions/' + showedEmotion + '.png')" class="mr-2"/>
+                    <v-layout v-if="showEmotionsPicker" class="emotions-picker" align-center>
+                        <img v-for="index in 5" @click="setEmotion(index)" :src="require('@/assets/emotions/' + index + '.png')"/>	
+                        <v-icon @click="setEmotion(0)">close</v-icon>
                     </v-layout>
+                </v-layout>
                 <v-divider></v-divider>
                 <comment-list 
                     :key="commentsKey"
@@ -120,7 +127,13 @@ export default {
                 action: '',
                 isGiphy: ''
             },
-            commentsKey: 0
+            commentsKey: 0,
+            showEmotionsPicker: false,
+			emotions: 4,
+			userEmotion: {
+                type: null,
+                id: null
+            }
         }
     },
 
@@ -241,6 +254,17 @@ export default {
                 this.commentsKey += 1
                 this.fetchComment()
             }
+        },
+
+        emotionClick() {
+            this.showEmotionsPicker = !this.showEmotionsPicker
+        },
+        
+        setEmotion(type) {
+            if (type === 0 && this.userEmotion.type) this.emotions -= 1 
+            else if (type !== 0 && !this.userEmotion.type) this.emotions += 1
+            this.showEmotionsPicker = false
+            this.userEmotion.type = type
         }
     },
 
@@ -259,6 +283,10 @@ export default {
 
         isGiphy() {
             return this.post.post.match(/^\/giphy\shttps:\/\/.+\.gif\s+.+/);
+        },
+
+        showedEmotion() {
+			return this.userEmotion.type ? this.userEmotion.type : 0
         }
     }
 }
@@ -281,6 +309,47 @@ export default {
     background-color: #eee;
     border-radius: 4px;
     min-height: 200px;
+}
+
+.story-attribute {
+    position: relative;
+}
+
+.story-attribute img {
+    height: 20px;
+    width: 20px;
+}
+
+.story-attribute > * {
+    cursor: pointer;
+}
+
+.emotions-picker {
+    background-color: white;
+    position: absolute;
+    bottom: 36px;
+    right: 8px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, .2);
+    border-radius: 2px;
+    z-index: 4;
+}
+
+.emotions-picker > img,
+.emotions-picker > * {
+    width: 24px;
+    height: 24px;
+    box-sizing: content-box;
+    padding: 8px 10px;
+}
+
+.backdrop {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-color: transparent;
 }
 </style>
 
