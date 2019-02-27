@@ -1,10 +1,13 @@
 if (workbox) {
+    const offlinePage = '/offline/';
     workbox.setConfig({
         debug: false,
     });
 
     self.__precacheManifest = [].concat(self.__precacheManifest || []);
-    workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+    workbox.precaching.precacheAndRoute(self.__precacheManifest);
+
+    workbox.routing.registerNavigationRoute('index.html')
     
     workbox.precaching.suppressWarnings();
     workbox.routing.registerRoute(
