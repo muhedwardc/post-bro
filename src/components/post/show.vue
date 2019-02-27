@@ -65,14 +65,28 @@
                     </div> -->
                 </v-layout>
                 <v-layout class="story-attribute pl-2 pr-2 pb-2" justify-space-between align-center>
-					<v-layout align-center @click="$router.push({ name: 'Show', params: { id: post.id } })"  style="flex-grow: unset;" class="caption">
-						{{ emotions }} Likes&nbsp;&nbsp;
+					<v-layout align-center  style="flex-grow: unset;" class="caption">
+						{{ emotionsCount }} Likes&nbsp;&nbsp;
 						{{ post.comments_count }} Comments
 					</v-layout>
-                    <img @click="emotionClick" :src="require('@/assets/emotions/' + showedEmotion + '.png')" class="mr-2"/>
+                    <img @click="emotionClick" :src="require('@/assets/emotions/' + showedEmotion + '.png')" class="mr-1x"/>
                     <v-layout v-if="showEmotionsPicker" class="emotions-picker" align-center>
                         <img v-for="index in 5" @click="setEmotion(index)" :src="require('@/assets/emotions/' + index + '.png')"/>	
                         <v-icon @click="setEmotion(0)">close</v-icon>
+                    </v-layout>
+                </v-layout>
+                <v-divider></v-divider>
+                <v-layout justify-space-between @click="showEmotionList = true" style="cursor: pointer;">
+                    <v-layout align-center class="emotions">
+                        <div v-for="e in emotions" :key="e.userId">
+                            <v-avatar size="32px">
+                                <img :src="$store.getters.gravatar(e.email)">
+                            </v-avatar>
+                            <img :src="require('@/assets/emotions/' + e.type + '.png')">
+                        </div>
+                    </v-layout>
+                    <v-layout align-center style="flex-grow: unset;" class="pa-2">
+                        <v-icon>keyboard_arrow_right</v-icon>
                     </v-layout>
                 </v-layout>
                 <v-divider></v-divider>
@@ -92,17 +106,22 @@
         <v-btn color="blue" dark medium fixed bottom right fab @click="compose('compose', 'comment')">
             <v-icon>add_comment</v-icon>
         </v-btn>
+        <v-dialog v-model="showEmotionList" fullscreen transition="dialog-bottom-transition">
+            <emotion-list :emotions="emotions" @close-list="showEmotionList = false"></emotion-list>
+        </v-dialog>
     </div>
 </template>
 
 <script>
 import appLoading from '../loading'
 import commentList from '../comment/commentList'
+import emotionList from './emotionList'
 
 export default {
     components: {
         appLoading,
-        commentList
+        commentList,
+        emotionList
     },
 
     data() {
@@ -129,7 +148,18 @@ export default {
             },
             commentsKey: 0,
             showEmotionsPicker: false,
-			emotions: 4,
+            showEmotionList: false,
+			emotions: [
+                { type: 5, userId: '123', email: 'muhedwardc@gmail.com', name: 'Muhammad Edward Chakim' },
+                { type: 1, userId: '124', email: 'aaa@gmail.com', name: 'Steven Ubuntu' },
+                { type: 2, userId: '125', email: 'coba@gmail.com', name: 'Nanda Artefak' },
+                { type: 3, userId: '126', email: 'hale@gmail.com', name: 'Edward' },
+                { type: 3, userId: '127', email: 'hale@gmail.com', name: 'Hendra Bufallo' },
+                { type: 3, userId: '128', email: 'hale@gmail.com', name: 'Cornel Cornet' },
+                { type: 3, userId: '129', email: 'hale@gmail.com', name: 'William Ahmad' },
+                { type: 3, userId: '130', email: 'hale@gmail.com', name: 'Son Gondes' },
+            ],
+            emotionsCount: 4,
 			userEmotion: {
                 type: null,
                 id: null
@@ -261,8 +291,8 @@ export default {
         },
         
         setEmotion(type) {
-            if (type === 0 && this.userEmotion.type) this.emotions -= 1 
-            else if (type !== 0 && !this.userEmotion.type) this.emotions += 1
+            if (type === 0 && this.userEmotion.type) this.emotionsCount -= 1 
+            else if (type !== 0 && !this.userEmotion.type) this.emotionsCount += 1
             this.showEmotionsPicker = false
             this.userEmotion.type = type
         }
@@ -303,6 +333,7 @@ export default {
 
 .show-post {
     padding-bottom: 48px;
+    position: relative;
 }
 
 .giphy-container {
@@ -350,6 +381,24 @@ export default {
     left: 0;
     z-index: 1;
     background-color: transparent;
+}
+
+.emotions {
+    padding: 8px 0;
+    overflow-x: hidden;
+}
+
+.emotions > div {
+    position: relative;
+    margin: 0 6px;
+}
+
+.emotions > div > img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
 }
 </style>
 

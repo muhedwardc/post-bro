@@ -22,7 +22,7 @@
             <v-layout class="mt-2" v-if="commentsCount" align-center>
                 <v-layout class="story-attribute" justify-space-between align-center>
 					<v-layout align-center @click="$router.push({ name: 'Show', params: { id: post.id } })"  style="flex-grow: unset;" class="caption">
-						{{ emotions }} Likes&nbsp;&nbsp;
+						{{ emotionsCount }} Likes&nbsp;&nbsp;
 						{{ post.comments_count }} Comments
 					</v-layout>
                     <img @click="emotionClick" :src="require('@/assets/emotions/' + showedEmotion + '.png')" class="mr-2"/>
@@ -56,7 +56,13 @@ export default {
             giphyURL: '',
 			text: '',
             showEmotionsPicker: false,
-			emotions: 4,
+			emotions: [
+                { type: 5, userId: '123' },
+                { type: 1, userId: '124' },
+                { type: 2, userId: '125' },
+                { type: 3, userId: '126' }
+            ],
+            emotionsCount: 4,
 			userEmotion: {
                 type: null,
                 id: null
@@ -88,8 +94,8 @@ export default {
         },
         
         setEmotion(type) {
-            if (type === 0 && this.userEmotion.type) this.emotions -= 1 
-            else if (type !== 0 && !this.userEmotion.type) this.emotions += 1
+            if (type === 0 && this.userEmotion.type) this.emotionsCount -= 1 
+            else if (type !== 0 && !this.userEmotion.type) this.emotionsCount += 1
             this.showEmotionsPicker = false
             this.userEmotion.type = type
         }
