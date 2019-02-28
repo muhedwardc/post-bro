@@ -109,6 +109,7 @@
         <v-dialog v-model="showEmotionList" fullscreen transition="dialog-bottom-transition">
             <emotion-list :emotions="emotions" @close-list="showEmotionList = false"></emotion-list>
         </v-dialog>
+        <div class="backdrop" @click="showEmotionsPicker = false" v-if="showEmotionsPicker"></div>
     </div>
 </template>
 
